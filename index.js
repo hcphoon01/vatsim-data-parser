@@ -117,25 +117,12 @@ request.get(vatSpyURL, function (err, res, body) {
               j++
             ) {
               const el = body[j].split("|");
-              if (vatSpyData.firs[element[0]]) {
-                vatSpyData.firs[element[0]].coordinates.push({
+              const k = vatSpyData.firs.findIndex(el => el.name == element[0]);
+              if (vatSpyData.firs[k]) {
+                vatSpyData.firs[k].coordinates.push({
                   latitude: el[0],
                   longitude: el[1],
                 });
-              } else {
-                // Workaround for Wien Radar sectors
-                try {
-                  const shortenedEl = element[0].split("-")[0];
-                  const underscoreEl = element[0].replace("-", "_");
-                  vatSpyData.firs[shortenedEl].positions
-                    .find((val) => val.position == underscoreEl)
-                    .coordinates.push({
-                      latitude: el[0],
-                      longitude: el[1],
-                    });
-                } catch (e) {
-                  // nothing
-                }
               }
             }
           }
