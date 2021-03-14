@@ -7,10 +7,11 @@ const firURL =
   "https://raw.githubusercontent.com/vatsimnetwork/vatspy-data-project/master/FIRBoundaries.dat";
 
 const vatSpyData = {
-  countries: {},
+  countries: [],
   airports: [],
-  firs: {},
-  uirs: {},
+  positions: [],
+  firs: [],
+  uirs: [],
 };
 
 request.get(vatSpyURL, function (err, res, body) {
@@ -32,15 +33,27 @@ request.get(vatSpyURL, function (err, res, body) {
     //Countries Array
     for (let i = 1; i < indexes[1] - 1; i++) {
       const element = body[i].split("|");
-      if (element[0] in vatSpyData.countries) {
-        vatSpyData.countries[element[0]].push({
-          abbreviation: element[1],
+      if (i == 1) {
+        vatSpyData.countries.push({
+          name: element[0],
+          abbreviations: [element[1]],
           type: element[2],
         });
       } else {
-        vatSpyData.countries[element[0]] = [
-          { abbreviation: element[1], type: element[2] },
-        ];
+        if (
+          vatSpyData.countries[vatSpyData.countries.length - 1].name ==
+          element[0]
+        ) {
+          vatSpyData.countries[
+            vatSpyData.countries.length - 1
+          ].abbreviations.push(element[1]);
+        } else {
+          vatSpyData.countries.push({
+            name: element[0],
+            abbreviations: [element[1]],
+            type: element[2],
+          });
+        }
       }
     }
 
@@ -57,31 +70,35 @@ request.get(vatSpyURL, function (err, res, body) {
     // FIR Array
     for (let i = indexes[2] + 1; i < indexes[3]; i++) {
       const element = body[i].split("|");
-      if (element[0] in vatSpyData.firs) {
-        vatSpyData.firs[element[0]].positions.push({
-          name: element[1],
-          position: element[2],
+      vatSpyData.positions.push({
+        position: element[2] ? element[2] : element[0],
+        name: element[1],
+        fir: element[0],
+      });
+      if (i == indexes[2] + 1) {
+        vatSpyData.firs.push({
+          name: element[0],
+          coordinates: [],
         });
       } else {
-        vatSpyData.firs[element[0]] = {
-          positions: [{ name: element[1], position: element[2] }],
-          coordinates: [],
-        };
+        if (vatSpyData.firs[vatSpyData.firs.length - 1].name != element[0]) {
+          vatSpyData.firs.push({
+            name: element[0],
+            coordinates: [],
+            parent: element[0] != element[3] ? element[3] : "",
+          });
+        }
       }
     }
+
     // UIR Array
     for (let i = indexes[3] + 1; i < indexes[4]; i++) {
       const element = body[i].split("|");
-      if (element[0] in vatSpyData.uirs) {
-        vatSpyData.uirs[element[0]].push({
-          name: element[1],
-          fir: element[2].split(","),
-        });
-      } else {
-        vatSpyData.uirs[element[0]] = [
-          { name: element[1], fir: element[2].split(",") },
-        ];
-      }
+      vatSpyData.uirs.push({
+        ident: element[0],
+        name: element[1],
+        fir: element[2].split(","),
+      });
     }
 
     request.get(firURL, function (err, res, body) {
