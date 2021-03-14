@@ -1,0 +1,22 @@
+{
+  "name": "vatsim-data-parser",
+  "version": "1.0.0",
+  "description": "A Node.js based parser for the VATSIM Data Project",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hcphoon01/vatsim-data-parser.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/hcphoon01/vatsim-data-parser/issues"
+  },
+  "homepage": "https://github.com/hcphoon01/vatsim-data-parser#readme",
+  "dependencies": {
+    "request": "^2.88.2"
+  }
+}
